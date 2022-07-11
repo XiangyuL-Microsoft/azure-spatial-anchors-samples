@@ -219,7 +219,22 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                     currentAppState = AppState.DemoStepBusy;
                     CloudManager.StopSession();
                     CleanupSpawnedObjects();
-                    await CloudManager.ResetSessionAsync();
+                    UnityEngine.XR.ARFoundation.ARSession arSession = FindObjectOfType<UnityEngine.XR.ARFoundation.ARSession>();
+                    if(arSession != null)
+                    {
+                        Debug.Log("Reset AR Foundation Session");
+                        arSession.Reset();
+                        Debug.Log("Reset Spatial Anchors Session");
+                        await CloudManager.ResetSessionAsync();
+                        // It seems that DestroySession is not necessary
+                        //Debug.Log("Destory Spatial Anchors Session");
+                        //CloudManager.DestroySession();
+                    }
+                    else
+                    {
+                        Debug.Log("AR Foundation Session not found");
+                        await CloudManager.ResetSessionAsync();
+                    }
                     currentAppState = AppState.DemoStepCreateSessionForQuery;
                     break;
                 case AppState.DemoStepCreateSessionForQuery:
